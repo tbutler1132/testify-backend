@@ -2,6 +2,16 @@ import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema
 
+const mediaSchema = new Schema(
+    {
+        url: {type: String},
+        title: {type: String},
+    },
+    {
+        timestamps: true
+    }
+)
+
 const testSchema = new Schema(
     {
         title: {type: String},
@@ -25,6 +35,7 @@ const userSchema = new Schema(
         username: {type: String, required: true},
         votes: {type: Number},
         link: {type: String},
+        media: [String],
         tests: [testSchema]
     },
     {

@@ -75,7 +75,23 @@ export const getUser = async (req, res) => {
     }
 }
 
-
+export const uploadMedia = async (req, res) => {
+    const { id } = req.params
+    const fileString = req.body.files
+    try {
+        const uploadedResponse = await cloudinary.uploader.upload(fileString, "dev_setups", {
+            resource_type: "video"
+        })
+        console.log(uploadedResponse)
+        const { secure_url } = uploadedResponse
+        const user = await User.findById(id)
+        user.media.push(secure_url)
+        user.save()
+        res.status(200).json(user)
+    } catch (error) {
+        console.log("Error")
+    }
+}
 
 export const createTest = async (req, res) => {
     const fileString = req.body.files 
