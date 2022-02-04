@@ -17,11 +17,13 @@ const testSchema = new Schema(
         title: {type: String},
         active: {type: Boolean},
         description: {type: String},
-        audio: [{
-            title: String,
-            file: String,
-            votes: Number
-        }]
+        media: [
+            {
+                url: String,
+                title: String,
+                votes: Number
+            },
+        ]
     },
     {
         timestamps: true
@@ -35,7 +37,7 @@ const userSchema = new Schema(
         username: {type: String, required: true},
         votes: {type: Number},
         link: {type: String},
-        media: [String],
+        media: [mediaSchema],
         tests: [testSchema]
     },
     {

@@ -77,15 +77,17 @@ export const getUser = async (req, res) => {
 
 export const uploadMedia = async (req, res) => {
     const { id } = req.params
-    const fileString = req.body.files
+    const { files, title } = req.body
+    console.log(title)
+    //Put the file in the body
+    //The title in the body
     try {
-        const uploadedResponse = await cloudinary.uploader.upload(fileString, "dev_setups", {
+        const uploadedResponse = await cloudinary.uploader.upload(files, "dev_setups", {
             resource_type: "video"
         })
-        console.log(uploadedResponse)
         const { secure_url } = uploadedResponse
         const user = await User.findById(id)
-        user.media.push(secure_url)
+        user.media.push({url: secure_url, title: title})
         user.save()
         res.status(200).json(user)
     } catch (error) {
@@ -94,13 +96,47 @@ export const uploadMedia = async (req, res) => {
 }
 
 export const createTest = async (req, res) => {
-    const fileString = req.body.files 
+    const test = req.body
+    const id = req.params.id
     try {
-        const uploadedResponse = await cloudinary.uploader.upload(fileString, "dev_setups", {
-            resource_type: "video"
-        })
-        console.log(uploadedResponse)
+        const user = await User.findById(id)
+        user.tests.push(test)
+        await user.save()
+        res.status(200).json(test)
     } catch (error) {
         console.error(error)
     }
 }
+
+export const getRandomTest = async (req, res) => {
+    
+    try {
+        const count = await User.estimatedDocumentCount()
+        const random = Math.floor(Math.random() * count)
+        const user = await User.findOne().skip(random)
+        const random2 = Math.floor(Math.random() * user.tests.length)
+        const { media, _id } = user.tests[random2]
+        res.status(200).json({
+            media,
+            testId: _id,
+            userId: user._id
+        })
+    } catch (error) {
+        console.log(error)
+    }
+
+
+    // collection.find({ arrayElementName: { $exists: true, $not: {$size: 0} } })
+
+    //Find documents where value does not equal passed in value
+    // { field: { $ne: value } }
+}
+
+// export const getTests = async (req, res) => {
+//     id = req.params.id
+//     try {
+        
+//     } catch (error) {
+        
+//     }
+// }
