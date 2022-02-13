@@ -132,11 +132,33 @@ export const getRandomTest = async (req, res) => {
     // { field: { $ne: value } }
 }
 
-// export const getTests = async (req, res) => {
-//     id = req.params.id
-//     try {
+
+export const updateTest = async (req, res) => {
+    const { testId, userId } = req.params
+    const update = req.body
+    console.log(update)
+    try {
+        const test = await User.findById(userId).tests.id(testId)
+        test.set(update)
+        res.status(200).json('Success')
+    } catch (error) {
         
-//     } catch (error) {
-        
-//     }
-// }
+    }
+}
+
+export const updateMedia = async (req, res) => {
+    const { testId, userId, mediaId } = req.params
+    const updatedMedia = req.body
+    try {
+        const user = await User.findById(userId)
+        const test = user.tests.id(testId)
+        const media = test.media.id(mediaId)
+        media.votes = updatedMedia.votes
+        await user.save()
+        res.status(200)
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+
