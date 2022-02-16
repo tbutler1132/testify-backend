@@ -3,9 +3,23 @@ import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import cloudinary from '../utils/cloudinary.js'
+import pkg from '@google-cloud/storage'
+const { Storage } = pkg
+import { fileURLToPath } from 'url';
+import path from 'path'
+import { dirname } from 'path';
+import Multer from 'multer'
 dotenv.config()
 
+
 const jwtSecret = process.env.JWT_TOKEN
+
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+    limits: {
+      fileSize: 5 * 1024 * 1024, // no larger than 5mb, you can change as needed.
+    },
+});
 
 export const signin = async (req, res) => {
 
@@ -78,7 +92,6 @@ export const getUser = async (req, res) => {
 export const uploadMedia = async (req, res) => {
     const { id } = req.params
     const { files, title } = req.body
-    console.log(title)
     //Put the file in the body
     //The title in the body
     try {
@@ -159,6 +172,41 @@ export const updateMedia = async (req, res) => {
     } catch (error) {
         console.log("Error", error)
     }
+}
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const gc = new Storage({
+    keyFilename: path.join(__dirname, '../worlds-339012-6e682c5edf4f.json'),
+    projectId: "worlds-339012",
+})
+
+const bucket = gc.bucket('perceptly')
+
+export const uploadToGoogle = async (req, res, next) => {
+    if (!req.file) {
+        res.status(400).send('No file uploaded.');
+        return;
+    }
+
+    const blob = bucket.file(req.file.originalname);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on('error', err => {
+        next(err);
+    });
+    
+
+    blobStream.on('finish', () => {
+        // The public URL can be used to directly access the file via HTTP.
+        const publicUrl = format(
+          `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+        );
+        res.status(200).send(publicUrl);
+      });
+    
+      blobStream.end(req.file.buffer);
 }
 
 

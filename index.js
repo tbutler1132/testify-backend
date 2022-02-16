@@ -11,8 +11,8 @@ const mdb = process.env.MONGO_DB_URI
 
 const app = express();
 
-app.use(express.json({ limit: '30mb', extended: true }))
-app.use(express.urlencoded({ limit: '30mb', extended: true }))
+app.use(express.json({ limit: '100mb', extended: true }))
+app.use(express.urlencoded({ limit: '100mb', extended: true }))
 app.use(cors());
 
 app.use('/users', userRoutes)
