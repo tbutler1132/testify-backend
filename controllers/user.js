@@ -125,7 +125,6 @@ export const getRandomTest = async (req, res) => {
         console.log(error)
     }
 
-
     // collection.find({ arrayElementName: { $exists: true, $not: {$size: 0} } })
 
     //Find documents where value does not equal passed in value
@@ -158,6 +157,15 @@ export const updateMedia = async (req, res) => {
         res.status(200)
     } catch (error) {
         console.log("Error", error)
+    }
+}
+
+export const deleteTest = async (req, res) => {
+    const {userId, testId} = req.params
+    try {
+        
+    } catch (error) {
+        
     }
 }
 
