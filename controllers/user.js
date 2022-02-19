@@ -157,15 +157,19 @@ export const updateMedia = async (req, res) => {
         res.status(200)
     } catch (error) {
         console.log("Error", error)
+        res.status(500)
     }
 }
 
 export const deleteTest = async (req, res) => {
     const {userId, testId} = req.params
     try {
-        
+        const user = await User.findById(userId)
+        user.tests.id(testId).remove()
+        await user.save()
+        res.status(200).json(user.tests)  
     } catch (error) {
-        
+        res.status(500)
     }
 }
 

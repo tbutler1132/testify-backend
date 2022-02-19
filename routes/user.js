@@ -10,7 +10,7 @@ router.post('/:id/upload', uploadMedia)
 router.get('/tests/random', getRandomTest)
 router.get('/:userId/tests/:testId', updateTest)
 router.patch('/:userId/tests/:testId/media/:mediaId', updateMedia)
-router.delete('/"userId/tests/"testId')
+router.delete('/:userId/tests/:testId', deleteTest)
 
 router.post('/signin', signin)
 router.post('/signup', signup)
